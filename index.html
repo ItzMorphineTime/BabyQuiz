@@ -1,36 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dynamic JSON Quiz</title>
   <style>
-    :root{
-      --bg: #0b1020;
-      --bg-soft:#121938;
-      --card:#0f1530;
-      --text:#e9ecf5;
-      --muted:#b9c1dd;
-      --accent:#7c9cff;
-      --accent-2:#62e0a4;
-      --danger:#ff6b6b;
-      --warn:#ffd166;
-      --border:rgba(255,255,255,.12);
-      --shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+    /* ===================== Themes ===================== */
+    :root, :root[data-theme="dark"]{ /* Midnight (default/dark) */
+      --bg:#0b1020; --bg-soft:#121938; --card:#0f1530; --text:#e9ecf5; --muted:#b9c1dd;
+      --accent:#7c9cff; --accent-2:#62e0a4; --danger:#ff6b6b; --warn:#ffd166;
+      --border:rgba(255,255,255,.12); --shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
     }
+    :root[data-theme="light"]{
+      --bg:#f6f8ff; --bg-soft:#eef2ff; --card:#ffffff; --text:#0c1430; --muted:#48527a;
+      --accent:#355cff; --accent-2:#0aa36c; --danger:#d84747; --warn:#c48d00;
+      --border:rgba(10,16,40,.12); --shadow:0 10px 30px rgba(18,27,78,.08), inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    :root[data-theme="ocean"]{
+      --bg:#031926; --bg-soft:#06283d; --card:#0a2a43; --text:#e6f7ff; --muted:#9ad1ff;
+      --accent:#39a0ed; --accent-2:#12d1b1; --danger:#ff6b6b; --warn:#ffd166;
+      --border:rgba(153,205,255,.2); --shadow:0 10px 30px rgba(0,20,40,.45), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    :root[data-theme="forest"]{
+      --bg:#0d1b12; --bg-soft:#13281b; --card:#0f2a1a; --text:#eaf7ed; --muted:#b5d3bf;
+      --accent:#4ac97d; --accent-2:#a6f0c1; --danger:#f87171; --warn:#fde047;
+      --border:rgba(200,255,220,.18); --shadow:0 10px 30px rgba(0,30,10,.45), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    :root[data-theme="contrast"]{ /* High contrast */
+      --bg:#000; --bg-soft:#111; --card:#000; --text:#fff; --muted:#d0d0d0;
+      --accent:#00e5ff; --accent-2:#1cff95; --danger:#ff3b3b; --warn:#ffd400;
+      --border:rgba(255,255,255,.6); --shadow:none;
+    }
+    :root[data-theme="auto"]{}
     @media (prefers-color-scheme: light){
-      :root{
-        --bg:#f6f8ff; --bg-soft:#eef2ff; --card:#ffffff; --text:#0c1430; --muted:#48527a; --accent:#355cff; --accent-2:#0aa36c; --danger:#d84747; --warn:#c48d00; --border:rgba(10,16,40,.12); --shadow:0 10px 30px rgba(18,27,78,.08), inset 0 1px 0 rgba(255,255,255,.7);
+      :root[data-theme="auto"]{
+        --bg:#f6f8ff; --bg-soft:#eef2ff; --card:#ffffff; --text:#0c1430; --muted:#48527a;
+        --accent:#355cff; --accent-2:#0aa36c; --danger:#d84747; --warn:#c48d00;
+        --border:rgba(10,16,40,.12); --shadow:0 10px 30px rgba(18,27,78,.08), inset 0 1px 0 rgba(255,255,255,.7);
       }
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; background:linear-gradient(180deg,var(--bg),var(--bg-soft) 60%); color:var(--text)}
-    a{color:var(--accent)}
-    .wrap{max-width:1100px; margin:40px auto; padding:0 16px}
+    @media (prefers-color-scheme: dark){
+      :root[data-theme="auto"]{
+        --bg:#0b1020; --bg-soft:#121938; --card:#0f1530; --text:#e9ecf5; --muted:#b9c1dd;
+        --accent:#7c9cff; --accent-2:#62e0a4; --danger:#ff6b6b; --warn:#ffd166;
+        --border:rgba(255,255,255,.12); --shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+      }
+    }
 
-    .app{display:grid; grid-template-columns: 360px 1fr; gap:22px}
-    @media (max-width: 980px){.app{grid-template-columns: 1fr}}
+    /* ================= Base layout ================= */
+    *{box-sizing:border-box}
+    html,body{margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; background: transparent; color:var(--text); padding-bottom: calc(150px + env(safe-area-inset-bottom));}
+    body{margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; background:linear-gradient(180deg,var(--bg),var(--bg-soft) 60%); color:var(--text); padding-bottom: calc(150px + env(safe-area-inset-bottom));}
+    /* Fixed, non-repeating gradient background using a viewport-pinned layer */
+    body::before{content:""; position:fixed; inset:0; z-index:-1; background:linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 60%);}
+    a{color:var(--accent)}
+    .wrap{max-width:1400px; margin:40px auto; padding:0 16px}
 
     .panel{background:var(--card); border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow)}
     .panel h2{margin:0 0 12px 0; font-size:20px}
@@ -44,34 +68,36 @@
     .drop{border:1px dashed var(--border); border-radius:12px; padding:12px; text-align:center; color:var(--muted); font-size:14px}
     .drop.dragover{border-color:var(--accent)}
 
-    .btn{appearance:none; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.05)); color:var(--text); padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; box-shadow:var(--shadow); transition:transform .02s ease-in, border-color .2s;}
+    .btn{appearance:none; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.05)); color:var(--text); padding:12px 16px; border-radius:12px; cursor:pointer; font-weight:700; box-shadow:var(--shadow); transition:transform .02s ease-in, border-color .2s; font-size:16px}
     .btn:hover{transform:translateY(-1px); border-color:var(--accent)}
     .btn.accent{background: linear-gradient(180deg, var(--accent), #3e74ff); border-color: transparent; color:white}
     .btn.ghost{background:transparent}
     .btn.warn{background:linear-gradient(180deg, var(--warn), #f7c543); color:#1a1200; border-color:transparent}
     .btn.danger{background:linear-gradient(180deg, var(--danger), #f04d4d); color:white; border-color:transparent}
-    .btn.small{padding:6px 10px; font-weight:600; font-size:12px; border-radius:10px}
+    .btn.small{padding:8px 12px; font-weight:700; font-size:14px; border-radius:10px}
+    .btn.lg{padding:14px 18px; font-size:18px; border-radius:14px}
 
-    .toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin:4px 0 8px}
-    .toolbar .left, .toolbar .right{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    /* Top controls stacked; quiz takes full width */
+    .controls{margin-bottom:18px}
+    .controls-grid{display:grid; grid-template-columns: 1fr; gap:18px}
+    @media (min-width: 960px){ .controls-grid{ grid-template-columns: 2fr 1fr; } }
 
-    .stat{display:inline-flex; gap:8px; align-items:center; padding:8px 10px; border:1px solid var(--border); border-radius:12px; font-size:14px; color:var(--muted)}
+    .quiz{display:flex; flex-direction:column; gap:14px; padding:0}
 
-    .quiz{display:flex; flex-direction:column; gap:14px; padding:12px}
-
-    .card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.06)); border:1px solid var(--border); border-radius:16px; padding:16px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.06)); border:1px solid var(--border); border-radius:16px; padding:18px}
     .qhead{display:flex; gap:8px; align-items:baseline; justify-content:space-between}
-    .qid{font-size:12px; color:var(--muted)}
-    .qtext{font-size:18px; font-weight:700; margin:6px 0 2px}
+    .qid{font-size:13px; color:var(--muted)}
+    .qtext{font-size:20px; font-weight:800; margin:6px 0 2px}
 
-    .choices{margin-top:10px; display:grid; gap:8px}
-    .choice{display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border:1px solid var(--border); border-radius:12px; cursor:pointer}
+    .choices{margin-top:12px; display:grid; gap:10px}
+    @media (min-width: 900px){ .choices{ grid-template-columns: 1fr 1fr; } }
+    .choice{display:flex; gap:12px; align-items:flex-start; padding:12px 14px; border:1px solid var(--border); border-radius:12px; cursor:pointer}
     .choice input{transform: translateY(2px)}
     .choice.correct{outline:2px solid var(--accent-2)}
     .choice.wrong{outline:2px solid var(--danger)}
 
-    .actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
-    .explain{margin-top:8px; font-size:14px; color:var(--muted); display:none}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    .explain{margin-top:10px; font-size:15px; color:var(--muted); display:none}
     .explain.show{display:block}
     .explain strong{color:var(--text)}
 
@@ -79,71 +105,120 @@
 
     .footer{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap}
     .hidden{display:none !important}
+
+    /* ===== Persistent bottom dock ===== */
+    .dock{position:fixed; left:0; right:0; bottom:0; z-index:50; padding:12px clamp(12px, 4vw, 28px) calc(12px + env(safe-area-inset-bottom));}
+    .dock-inner{max-width:1400px; margin:0 auto; display:flex; gap:12px; align-items:center; justify-content:space-between; background:var(--card); border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); padding:14px 16px}
+    .dock .stats{display:flex; gap:10px; flex-wrap:wrap}
+    .dock .stat{font-size:18px; padding:12px 14px}
+    .dock .actions{display:flex; gap:8px; flex-wrap:wrap}
+
+    /* ===== Scorecard overlay ===== */
+    #scoreOverlay{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.5)}
+    .scorecard{background:var(--card); border:2px solid var(--border); border-radius:24px; padding:24px 28px; box-shadow:var(--shadow); text-align:center}
+    .scorecard h3{margin:0 0 8px 0; font-size:18px; color:var(--muted)}
+    .scorecard .big{font-size:52px; font-weight:900; letter-spacing:1px; margin:4px 0 12px}
+    .scorecard .row{display:flex; gap:10px; justify-content:center}
+      
+    /* ===== Form control fixes ===== */
+    /* Ensure Theme dropdown has proper contrast across themes and when open */
+    select#themeSelect.btn{ background: var(--card); color: var(--text); border:1px solid var(--border); }
+    select#themeSelect.btn:focus{ outline: 2px solid var(--accent); outline-offset:2px; }
+    select#themeSelect.btn option{ background: var(--card); color: var(--text); }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header style="margin:0 0 18px 2px">
       <h1 style="margin:0; font-size:28px">Dynamic JSON Quiz</h1>
-      <p style="margin:6px 0 0; color:var(--muted); max-width:80ch">Paste JSON or upload a file, then generate an interactive MCQ quiz. Supports explanations and references. Your progress is saved locally.</p>
+      <p style="margin:6px 0 0; color:var(--muted); max-width:80ch">Paste JSON or upload a file, then generate an interactive MCQ quiz. Choose a theme, shuffle options, auto‑reveal explanations, and export results. Your data never leaves the browser.</p>
     </header>
 
-    <div class="app">
-      <!-- Input Panel -->
-      <section class="panel" aria-label="Input">
-        <div class="inner">
-          <h2>1) Provide your JSON</h2>
-          <div class="control">
-            <button id="btnSample" class="btn small">Load sample</button>
-            <button id="btnTemplate" class="btn small ghost">Copy template</button>
-          </div>
-          <textarea id="jsonInput" placeholder="Paste your quiz JSON here..."></textarea>
-          <div class="control">
-            <label for="file">Or upload a .json file</label>
-            <input id="file" type="file" accept="application/json,.json" />
-          </div>
-          <div id="drop" class="drop" tabindex="0" aria-label="Drop zone">Drag & drop a JSON file here</div>
-
-          <h2 style="margin-top:18px">2) Options</h2>
-          <div class="control">
-            <label><input type="checkbox" id="shuffleChoices" checked> Shuffle choices</label>
-            <label><input type="checkbox" id="instantReveal"> Reveal explanation immediately</label>
-          </div>
-          <div class="control">
-            <label><input type="checkbox" id="persistState" checked> Save progress (local)</label>
-          </div>
-
-          <div class="control">
-            <button id="btnBuild" class="btn accent">Build Quiz</button>
-            <button id="btnReset" class="btn ghost">Reset</button>
-          </div>
-          <div id="errors" class="error hidden" role="alert" aria-live="polite"></div>
-        </div>
-      </section>
-
-      <!-- Quiz Panel -->
-      <section class="panel" aria-label="Quiz">
-        <div class="inner">
-          <div class="toolbar">
-            <div class="left">
-              <div class="stat" id="statCount">Questions: 0</div>
-              <div class="stat" id="statScore" aria-live="polite">Score: 0</div>
-              <div class="stat" id="statDone">Answered: 0</div>
+    <!-- ======= TOP CONTROLS (Steps 1 & 2) ======= -->
+    <section class="panel controls" aria-label="Setup">
+      <div class="inner">
+        <div class="controls-grid">
+          <!-- Step 1: JSON input -->
+          <div>
+            <h2>1) Provide your JSON</h2>
+            <div class="control">
+              <button id="btnSample" class="btn small">Load sample</button>
+              <button id="btnTests" class="btn small ghost">Load edge tests</button>
+              <button id="btnTemplate" class="btn small ghost">Copy template</button>
             </div>
-            <div class="right">
-              <button id="btnCheckAll" class="btn small">Check all</button>
-              <button id="btnShowAllWhy" class="btn small">Show all explanations</button>
-              <button id="btnExport" class="btn small">Export results (CSV)</button>
+            <textarea id="jsonInput" placeholder="Paste your quiz JSON here..."></textarea>
+            <div class="control">
+              <label for="file">Or upload a .json file</label>
+              <input id="file" type="file" accept="application/json,.json" />
             </div>
+            <div id="drop" class="drop" tabindex="0" aria-label="Drop zone">Drag & drop a JSON file here</div>
           </div>
-          <div id="quiz" class="quiz" aria-live="polite"></div>
+
+          <!-- Step 2: Options -->
+          <div>
+            <h2>2) Options</h2>
+            <div class="control">
+              <label><input type="checkbox" id="shuffleChoices" checked> Shuffle choices</label>
+              <label><input type="checkbox" id="instantReveal"> Reveal explanation immediately</label>
+              <label><input type="checkbox" id="persistState" checked> Save progress (local)</label>
+            </div>
+            <div class="control">
+              <label for="themeSelect">Theme</label>
+              <select id="themeSelect" class="btn small" style="padding-right:28px">
+                <option value="auto">Auto</option>
+                <option value="dark">Dark (Midnight)</option>
+                <option value="light">Light</option>
+                <option value="ocean">Ocean</option>
+                <option value="forest">Forest</option>
+                <option value="contrast">High Contrast</option>
+              </select>
+            </div>
+            <div class="control">
+              <button id="btnBuild" class="btn accent">Build Quiz</button>
+              <button id="btnReset" class="btn ghost">Reset</button>
+            </div>
+            <div id="errors" class="error hidden" role="alert" aria-live="polite"></div>
+          </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
+
+    <!-- ======= QUIZ (full width under controls) ======= -->
+    <section aria-label="Quiz">
+      <div id="quiz" class="quiz" aria-live="polite"></div>
+    </section>
 
     <footer class="footer">
-      <small style="color:var(--muted)">Tip: Use letters (A–E) to select an option when a question is focused. Your data never leaves the browser.</small>
+      <small style="color:var(--muted)">Tip: Use letters (A–E) to select an option when a question is focused.</small>
     </footer>
+  </div>
+
+  <!-- ===== Bottom dock (always visible) ===== -->
+  <div class="dock">
+    <div class="dock-inner">
+      <div class="stats">
+        <div class="stat" id="statCountBottom">Questions: 0</div>
+        <div class="stat" id="statScoreBottom">Score: 0</div>
+        <div class="stat" id="statDoneBottom">Answered: 0</div>
+      </div>
+      <div class="actions">
+        <button id="btnCheckAllBottom" class="btn lg accent">Check all</button>
+        <button id="btnShowAllWhyBottom" class="btn lg ghost">Show all</button>
+        <button id="btnClearAllBottom" class="btn lg danger">Clear all</button>
+        <button id="btnExportBottom" class="btn lg ghost">Export CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scorecard overlay -->
+  <div id="scoreOverlay" role="dialog" aria-modal="true" aria-labelledby="scoreTitle">
+    <div class="scorecard">
+      <h3 id="scoreTitle">Your score</h3>
+      <div class="big" id="scoreBig">0/0</div>
+      <div class="row">
+        <button id="closeScore" class="btn accent">Close</button>
+      </div>
+    </div>
   </div>
 
 <script>
@@ -163,19 +238,29 @@
     btnBuild: el('#btnBuild'),
     btnReset: el('#btnReset'),
     btnSample: el('#btnSample'),
+    btnTests: el('#btnTests'),
     btnTemplate: el('#btnTemplate'),
     shuffleChoices: el('#shuffleChoices'),
     instantReveal: el('#instantReveal'),
     persistState: el('#persistState'),
     quizRoot: el('#quiz'),
-    statCount: el('#statCount'),
-    statScore: el('#statScore'),
-    statDone: el('#statDone'),
-    btnCheckAll: el('#btnCheckAll'),
-    btnShowAllWhy: el('#btnShowAllWhy'),
-    btnExport: el('#btnExport'),
+    // bottom dock
+    statCountBottom: el('#statCountBottom'),
+    statScoreBottom: el('#statScoreBottom'),
+    statDoneBottom: el('#statDoneBottom'),
+    btnCheckAllBottom: el('#btnCheckAllBottom'),
+    btnShowAllWhyBottom: el('#btnShowAllWhyBottom'),
+    btnClearAllBottom: el('#btnClearAllBottom'),
+    btnExportBottom: el('#btnExportBottom'),
+    // score overlay
+    scoreOverlay: el('#scoreOverlay'),
+    scoreBig: el('#scoreBig'),
+    closeScore: el('#closeScore'),
+    // theme
+    themeSelectEl: document.getElementById('themeSelect'),
   };
 
+  // ====== Samples / Tests ======
   const SAMPLE = `[
   {
     "id": 2228,
@@ -206,6 +291,15 @@
   }
 ]`;
 
+  // Additional test cases (edge coverage)
+  const TESTS = `[
+    {"question":"No ID provided should default to index.","options":{"a":"Yes","b":"No"},"answer":"a"},
+    {"id": 3002, "question":"Two-option True/False.","options":{"a":"True","b":"False"},"answer":"b","why":"Simple TF test."},
+    {"id": 3003, "question":"Uppercase option keys allowed.","options":{"A":"Alpha","B":"Beta","C":"Gamma"},"answer":"C","why":"Case-insensitive matching."},
+    {"id": 3004, "question":"Long question with\\nnewlines to test CSV export.","options":{"a":"Works","b":"Breaks"},"answer":"a","reference":"https://example.com"},
+    {"id": 3005, "question":"Five options A–E.","options":{"a":"One","b":"Two","c":"Three","d":"Four","e":"Five"},"answer":"e"}
+  ]`;
+
   const TEMPLATE = `[
   {
     "id": 1,
@@ -217,7 +311,11 @@
   }
 ]`;
 
-  // Utilities
+  // ===== Theme handling =====
+  function applyTheme(theme){ document.documentElement.setAttribute('data-theme', theme); try{ localStorage.setItem('quiz_theme', theme); }catch{} }
+  function initTheme(){ let theme = 'auto'; try{ theme = localStorage.getItem('quiz_theme') || 'auto'; }catch{}; applyTheme(theme); if(dom.themeSelectEl) dom.themeSelectEl.value = theme; }
+
+  // ===== Utilities =====
   function normalize(rawArray){
     // returns array of {id, question, choices:[{key,text,isCorrect}], ref, why}
     return rawArray.map((q, idx) => {
@@ -244,41 +342,13 @@
       };
     });
   }
-  function mkErr(idx, msg){
-    return new Error(`Q${idx+1}: ${msg}`);
-  }
-  const shuffle = (arr) => {
-    const a = arr.slice();
-    for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
-    return a;
-  };
-  function saveLocal(){
-    if(!state.options.persist) return;
-    const payload = {
-      quiz: state.quiz.map(q => ({ id:q.id, choices:q.choices.map(c=>({key:c.key,text:c.text,isCorrect:c.isCorrect})) , question:q.question, why:q.why, reference:q.reference })),
-      user: Array.from(state.user.entries()),
-      options: state.options,
-      savedAt: Date.now()
-    };
-    localStorage.setItem('quiz_app_v2', JSON.stringify(payload));
-  }
-  function loadLocal(){
-    try{
-      const raw = localStorage.getItem('quiz_app_v2');
-      if(!raw) return null;
-      const data = JSON.parse(raw);
-      state.options = Object.assign(state.options, data.options||{});
-      state.quiz = (data.quiz||[]);
-      state.user = new Map(data.user||[]);
-      applyOptionToggles();
-      renderQuiz();
-      notify(`Restored ${state.quiz.length} questions from a previous session.`);
-      return true;
-    }catch{ return null; }
-  }
-  function clearLocal(){ localStorage.removeItem('quiz_app_v2'); }
+  function mkErr(idx, msg){ return new Error(`Q${idx+1}: ${msg}`); }
+  const shuffle = (arr) => { const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+  function saveLocal(){ if(!state.options.persist) return; const payload = { quiz: state.quiz.map(q => ({ id:q.id, choices:q.choices.map(c=>({key:c.key,text:c.text,isCorrect:c.isCorrect})) , question:q.question, why:q.why, reference:q.reference })), user: Array.from(state.user.entries()), options: state.options, savedAt: Date.now() }; try{ localStorage.setItem('quiz_app_v2', JSON.stringify(payload)); }catch{} }
+  function loadLocal(){ try{ const raw = localStorage.getItem('quiz_app_v2'); if(!raw) return null; const data = JSON.parse(raw); state.options = Object.assign(state.options, data.options||{}); state.quiz = (data.quiz||[]); state.user = new Map(data.user||[]); applyOptionToggles(); renderQuiz(); notify(`Restored ${state.quiz.length} questions from a previous session.`); return true; }catch{ return null; } }
+  function clearLocal(){ try{ localStorage.removeItem('quiz_app_v2'); }catch{} }
 
-  // Rendering
+  // ===== Rendering =====
   function renderQuiz(){
     dom.quizRoot.innerHTML = '';
     dom.errors.classList.add('hidden');
@@ -297,10 +367,6 @@
       title.querySelector('.qtext').textContent = q.question;
       head.appendChild(title);
 
-      const actionsRight = document.createElement('div');
-      actionsRight.innerHTML = '';
-      head.appendChild(actionsRight);
-
       const choicesWrap = document.createElement('div');
       choicesWrap.className = 'choices';
       const choices = state.options.shuffleChoices ? shuffle(q.choices) : q.choices;
@@ -312,7 +378,7 @@
         label.innerHTML = `
           <input type="radio" name="q_${q.id}" value="${escapeHTML(c.key)}" />
           <div>
-            <div style="font-weight:700">${String.fromCharCode(65+idx)}. <span class="opt"></span></div>
+            <div style="font-weight:800">${String.fromCharCode(65+idx)}. <span class="opt"></span></div>
             <div class="meta" style="color:var(--muted); font-size:12px">Key: ${c.key.toUpperCase()}</div>
           </div>`;
         label.querySelector('.opt').textContent = c.text;
@@ -338,14 +404,11 @@
       if(saved?.selectedKey){
         const input = card.querySelector(`input[value="${cssEscape(saved.selectedKey)}"]`);
         if(input){ input.checked = true; }
-        if(saved.correct !== undefined){ markResult(card, saved.correct ? saved.selectedKey : saved.selectedKey, q); }
-        if(saved.correct !== undefined){
-          // show explanation after checked
-          explain.classList.add('show');
-        }
+        if(saved.correct !== undefined){ markResult(card, saved.selectedKey, q, saved.correct); }
+        if(saved.correct !== undefined){ explain.classList.add('show'); }
       }
 
-      // keyboard shortcuts: A-E
+      // keyboard shortcuts: A–Z
       card.addEventListener('keydown', (ev) => {
         const key = ev.key.toLowerCase();
         if(key>='a' && key<='z'){
@@ -361,7 +424,7 @@
         const act = btn.dataset.act;
         if(act==='check') check(card, q);
         if(act==='clear') clearSelection(card, q);
-        if(act==='reveal') { reveal(card, q); }
+        if(act==='reveal') reveal(card, q);
       });
 
       // change selection
@@ -406,6 +469,21 @@
     updateStats();
   }
 
+  function clearAll(){
+    const cards = els('.card');
+    cards.forEach((card) => {
+      els('input[type="radio"]', card).forEach(i => i.checked = false);
+      els('.choice', card).forEach(c => c.classList.remove('correct','wrong'));
+      const qid = card.dataset.qid;
+      const u = state.user.get(qid) || {};
+      delete u.selectedKey; delete u.correct; delete u.checkedAt;
+      state.user.set(qid, u);
+      card.querySelector('.explain')?.classList.remove('show');
+    });
+    saveLocal();
+    updateStats();
+  }
+
   function check(card, q){
     const sel = card.querySelector('input[type="radio"]:checked');
     if(!sel){ return notify('Select an option first.'); }
@@ -422,7 +500,6 @@
   function reveal(card, q){
     const correct = q.choices.find(c => c.isCorrect);
     if(!correct) return;
-    // select it visually
     const input = card.querySelector(`input[value="${cssEscape(correct.key)}"]`);
     if(input){ input.checked = true; }
     markResult(card, correct.key, q, true);
@@ -436,10 +513,8 @@
 
   function markResult(card, selectedKey, q, isCorrect = null){
     els('.choice', card).forEach(lbl => lbl.classList.remove('correct','wrong'));
-    // mark selected
     const selectedLabel = card.querySelector(`label[data-key="${cssEscape(selectedKey)}"]`);
     if(selectedLabel){ selectedLabel.classList.add(isCorrect? 'correct':'wrong'); }
-    // always mark the actual correct choice with a subtle border if wrong selected
     if(isCorrect === false){
       const correct = q.choices.find(c => c.isCorrect);
       if(correct){ const lab = card.querySelector(`label[data-key="${cssEscape(correct.key)}"]`); lab?.classList.add('correct'); }
@@ -450,9 +525,10 @@
     const total = state.quiz.length;
     const answered = Array.from(state.user.values()).filter(v => v.correct !== undefined).length;
     const score = Array.from(state.user.values()).filter(v => v.correct === true).length;
-    dom.statCount.textContent = `Questions: ${total}`;
-    dom.statDone.textContent = `Answered: ${answered}`;
-    dom.statScore.textContent = `Score: ${score}`;
+    // bottom dock stats
+    dom.statCountBottom.textContent = `Questions: ${total}`;
+    dom.statDoneBottom.textContent = `Answered: ${answered}`;
+    dom.statScoreBottom.textContent = `Score: ${score}`;
   }
 
   function buildFromText(text){
@@ -467,29 +543,13 @@
     }catch(err){ showError(err.message || String(err)); }
   }
 
-  function showError(msg){
-    dom.errors.textContent = msg;
-    dom.errors.classList.remove('hidden');
-  }
-  function notify(msg){
-    dom.errors.textContent = msg;
-    dom.errors.classList.remove('hidden');
-    setTimeout(() => dom.errors.classList.add('hidden'), 2000);
-  }
+  function showError(msg){ dom.errors.textContent = msg; dom.errors.classList.remove('hidden'); }
+  function notify(msg){ dom.errors.textContent = msg; dom.errors.classList.remove('hidden'); setTimeout(() => dom.errors.classList.add('hidden'), 2000); }
+  function linkify(text){ return text.replace(/(https?:\/\/[^\s)]+)(\)?)/g, '<a target="_blank" rel="noopener" href="$1">$1</a>$2'); }
+  function escapeHTML(str){ return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+  function cssEscape(str){ return str.replace(/"/g, '\\"'); }
 
-  function linkify(text){
-    // simple URL detection
-    return text.replace(/(https?:\/\/[^\s)]+)(\)?)/g, '<a target="_blank" rel="noopener" href="$1">$1</a>$2');
-  }
-  function escapeHTML(str){
-    return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
-  }
-  function cssEscape(str){
-    // minimal escaper for attribute selectors
-    return str.replace(/"/g, '\\"');
-  }
-
-  // Export CSV
+  // ===== Export CSV =====
   function exportCSV(){
     if(!state.quiz.length){ return notify('Build a quiz first.'); }
     const rows = [['id','question','selected_key','correct','checked_at']];
@@ -510,13 +570,55 @@
     dom.persistState.checked = !!state.options.persist;
   }
 
-  // Handlers
+  // ===== Check all & score =====
+  function gradeAll(){
+    let correctCount = 0;
+    const cards = els('.card');
+    cards.forEach((card) => {
+      const id = card.dataset.qid;
+      const q = state.quiz.find(x => x.id === id);
+      if(!q) return;
+      const sel = card.querySelector('input[type="radio"]:checked');
+      if(sel){
+        // normal check path
+        const key = sel.value;
+        const isCorrect = q.choices.find(c => c.key === key)?.isCorrect === true;
+        markResult(card, key, q, isCorrect);
+        const u = state.user.get(q.id) || {};
+        u.selectedKey = key; u.correct = !!isCorrect; u.checkedAt = Date.now();
+        state.user.set(q.id, u);
+      } else {
+        // unanswered -> count incorrect, reveal correct
+        const correct = q.choices.find(c => c.isCorrect);
+        if(correct){
+          const lab = card.querySelector(`label[data-key="${cssEscape(correct.key)}"]`);
+          lab?.classList.add('correct');
+        }
+        const u = state.user.get(q.id) || {};
+        u.selectedKey = ''; u.correct = false; u.checkedAt = Date.now();
+        state.user.set(q.id, u);
+      }
+      card.querySelector('.explain')?.classList.add('show');
+    });
+
+    // compute score
+    correctCount = Array.from(state.user.values()).filter(v => v.correct === true).length;
+    updateStats();
+    showScorecard(correctCount, state.quiz.length);
+    saveLocal();
+  }
+
+  function showScorecard(score, total){
+    dom.scoreBig.textContent = `${score}/${total}`;
+    dom.scoreOverlay.style.display = 'flex';
+  }
+
+  // ===== Handlers =====
   dom.btnSample.addEventListener('click', () => { dom.jsonInput.value = SAMPLE; });
+  dom.btnTests.addEventListener('click', () => { dom.jsonInput.value = TESTS; });
   dom.btnTemplate.addEventListener('click', async () => {
-    try{
-      await navigator.clipboard.writeText(TEMPLATE);
-      notify('Template copied to clipboard.');
-    }catch{ dom.jsonInput.value = TEMPLATE; notify('Template placed into the textarea.'); }
+    try{ await navigator.clipboard.writeText(TEMPLATE); notify('Template copied to clipboard.'); }
+    catch{ dom.jsonInput.value = TEMPLATE; notify('Template placed into the textarea.'); }
   });
 
   dom.file.addEventListener('change', (e) => {
@@ -549,23 +651,23 @@
     state.quiz = []; state.user = new Map(); dom.quizRoot.innerHTML=''; updateStats(); clearLocal();
   });
 
-  dom.btnCheckAll.addEventListener('click', () => {
-    els('.card').forEach((card, i) => {
-      const id = card.dataset.qid;
-      const q = state.quiz.find(x => x.id === id);
-      if(q) check(card, q);
-    });
-  });
-
-  dom.btnShowAllWhy.addEventListener('click', () => {
-    els('.explain').forEach(x => x.classList.add('show'));
-  });
-
-  dom.btnExport.addEventListener('click', exportCSV);
+  // Bottom dock actions
+  dom.btnCheckAllBottom.addEventListener('click', gradeAll);
+  dom.btnShowAllWhyBottom.addEventListener('click', () => { els('.explain').forEach(x => x.classList.add('show')); });
+  dom.btnClearAllBottom.addEventListener('click', clearAll);
+  dom.btnExportBottom.addEventListener('click', exportCSV);
 
   dom.persistState.addEventListener('change', () => { state.options.persist = dom.persistState.checked; if(!state.options.persist) clearLocal(); else saveLocal(); });
 
-  // Try to restore previous session
+  // Theme switcher
+  if(dom.themeSelectEl){ dom.themeSelectEl.addEventListener('change', () => applyTheme(dom.themeSelectEl.value)); }
+
+  // Score overlay close
+  dom.closeScore.addEventListener('click', () => { dom.scoreOverlay.style.display = 'none'; });
+  dom.scoreOverlay.addEventListener('click', (e) => { if(e.target === dom.scoreOverlay) dom.scoreOverlay.style.display = 'none'; });
+
+  // Init
+  initTheme();
   loadLocal();
 })();
 </script>
